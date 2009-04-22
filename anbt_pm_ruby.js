@@ -73,12 +73,8 @@ function Monitor(){
 
 function Ruby(fontSize){
   this.fontSize   = fontWidth;
-  this.fontWidth  = fontWidth;
-  this.fontHeight = fontWidth;
   this.rbFontSize   = fontSize * 0.6;
-  this.rbFontWidth  = fontWidth * 0.6;
-  this.rbFontHeight = this.rbFontWidth;
-  this.rbMargin = this.rbFontHeight * 0.4;
+  this.rbMargin = this.rbFontSize * 0.4;
 
   //console.log(" / " + rbFontWidth+ " / " +rbFontHeight+ " / " +rbMargin);
   this.rb = [];
@@ -131,23 +127,23 @@ Ruby.prototype = {
     currentX += this.rbSpace; // 左端
     
     var rbBox = document.createElement("div");
+    var rbBoxHeight = getFontHeight("あ", this.fontSize) + getFontHeight("あ", this.rbFontSize) + this.rbMargin;
     rbBox.setAttribute("class", "rb_box");
     rbBox.style.display = "inline";
     rbBox.style.position = "absolute";
-    //rbBox.style.border = "solid 1px red";
-    rbBox.style.width = this.width();
-    rbBox.style.height = this.fontWidth + this.rbFontHeight + this.rbMargin;
     rbBox.style.left = originX;
-    rbBox.style.top = originY - this.fontHeight - this.rbFontHeight - this.rbMargin;
+    rbBox.style.width = this.width();
+    rbBox.style.top = originY - rbBoxHeight;
+    rbBox.style.height = rbBoxHeight;
     
     //---- rb ----
     for( var a=0; a<this.rb.length; a++ ){
       var c = document.createElement("span");
       c.style.fontSize = this.fontSize + "px";
       c.style.position = "absolute";
-      c.style.height = fontHeight;
-      c.style.top  = this.rbFontHeight + this.rbMargin;
       c.style.left = currentX;
+      c.style.top  = getFontHeight("あ", this.rbFontSize) + this.rbMargin;
+      c.style.height = getFontHeight("あ", this.fontSize);
       c.setAttribute("class", "char rb" );
       c.innerHTML = this.rb[a];
       rbBox.appendChild( c );
@@ -161,11 +157,11 @@ Ruby.prototype = {
     currentX += this.rtSpace; // 左端
     for( var a=0; a<this.rt.length; a++ ){
       var c = document.createElement("span");
-      c.style.fontSize = this.rbFontWidth + "px";
+      c.style.fontSize = this.rbFontSize + "px";
       c.style.position = "absolute";
-      c.style.height = this.rbFontHeight;
-      c.style.top  = 0;
       c.style.left = currentX;
+      c.style.top  = 0;
+      c.style.height = getFontHeight("あ", this.rbFontSize);
       c.setAttribute("class", "char rt" );
       c.innerHTML = this.rt[a];
       rbBox.appendChild( c );
@@ -216,10 +212,23 @@ function getFontWidth(c, fontSize){
   return temp.offsetWidth;
   dd.getElementsByTagName("body")[0].removeChild(temp);
 }
+function getFontHeight(c, fontSize){
+  var dd = document;
+  var temp = dd.createElement("span");
+  temp.style.fontSize = fontSize;
+  temp.style.padding = 0;
+  temp.style.visibility = "hidden";
+  temp.innerHTML = c;
+  
+  dd.getElementsByTagName("body")[0].appendChild(temp);
+  return temp.offsetHeight;
+  dd.getElementsByTagName("body")[0].removeChild(temp);
+}
 
 function Char(c, fontSize){
   this.c = c;
   this.w = getFontWidth(c, fontSize);
+  this.h = getFontHeight(c, fontSize);
 }
 Char.prototype = {
   width: function(){
@@ -231,10 +240,11 @@ Char.prototype = {
     c.style.position = "absolute";
     //c.style.width  = 20;
     c.style.height = fontHeight;
-    c.style.top = originY - fontHeight;
+    c.style.top = originY - this.h;
     //c.style.padding = "10";
     c.setAttribute("class", "char" );
-    c.style.width  = this.width();
+    c.style.width  = this.w;
+    c.style.height = this.h;
     c.innerHTML = this.c;
     c.style.left = originX;
     
