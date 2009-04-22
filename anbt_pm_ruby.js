@@ -381,10 +381,16 @@ function pmRubyBook(boxW, boxH, fontWidth, textareaId){
       box.style.backGroundColor = "#fff";
       box.style.width  = w + "px";
       box.style.height = h + "px";
-      //box.style.position = "relative";
-      box.style.position = "fixed";
+      box.style.position = "relative";
+      //box.style.position = "fixed";
       box.id = "page_"+ page;
       
+      var pageBox = document.createElement("p");
+      pageBox.innerHTML = " - " + (page+1) +" / "+ pageList.length + " - ";
+      pageBox.style.position = "absolute";
+      pageBox.style.right = 0;
+      pageBox.style.top = 0;
+      box.appendChild(pageBox);
       
       var currentX = 0;
       var currentY = lineHeight;
@@ -409,14 +415,6 @@ function pmRubyBook(boxW, boxH, fontWidth, textareaId){
       delete pageList[page];
       
       boxList.push(box);
-      if(page==0){
-        ;
-      }else if(page == pageList.length - 1){
-        boxList[page - 1].style.display = "none";
-        boxList[page].style.display = "none";
-      }else{
-        boxList[page - 1].style.display = "none";
-      }
       
       document.getElementsByTagName("body")[0].appendChild(box);
       mon.puts( "making box: " + (page+1) + " / " + pageList.length);
@@ -424,7 +422,7 @@ function pmRubyBook(boxW, boxH, fontWidth, textareaId){
   }
 
   
-  this.display = function(diff){
+  this.scrollPage = function(diff){
     pageN = currentPage + diff;
     
     if( pageN < 0){
@@ -434,10 +432,9 @@ function pmRubyBook(boxW, boxH, fontWidth, textareaId){
     }
     //mon.puts(currentPage + " to " + pageN);
     
-    document.getElementById("page_monitor").innerHTML = (pageN + 1) + " / " + pageList.length ;
-    
-    boxList[currentPage].style.display = "none";
-    boxList[pageN].style.display = "block";
+    var pageId = "page_" + pageN;
+    var y = document.getElementById(pageId).offsetTop;
+    window.scrollTo(0,y);
     
     currentPage = pageN;
   };
@@ -456,20 +453,20 @@ function pmRubyBook(boxW, boxH, fontWidth, textareaId){
     this.makeBoxList();
 
     currentPage = 0;
-    this.display(0);
+    this.scrollPage(0);
   }
 
   
   var self = this;
   function keyOperation(event){
     if(event.keyCode == 74){ // j
-      self.display(1);
+      self.scrollPage(1);
     }else if(event.keyCode == 75){ // k
-      self.display(-1);
+      self.scrollPage(-1);
     }else if(event.keyCode == 85){ // u
-      self.display(5);
+      self.scrollPage(5);
     }else if(event.keyCode == 73){ // i
-      self.display(-5);
+      self.scrollPage(-5);
     }
   }
   
